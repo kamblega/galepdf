@@ -40,10 +40,10 @@ public class GaleShapleyService {
 
         Map<Student, Project> matching = new HashMap<>();
         Map<Project, Student> projectAssignments = new HashMap<>();
-
+        
         // Track which students are free
         Queue<Student> freeStudents = new LinkedList<>(students);
-
+        
         // Track the next project each student will propose to
         Map<Student, Integer> nextProjectIndex = new HashMap<>();
         for (Student student : students) {
@@ -56,9 +56,9 @@ public class GaleShapleyService {
         while (!freeStudents.isEmpty() && iterations < maxIterations) {
             iterations++;
             Student student = freeStudents.poll();
-
+            
             System.out.println("Iteration " + iterations + ": Processing student " + student.getName());
-
+            
             // Get student's preference list (sorted by score - highest first)
             List<Project> studentPreferences = projects.stream()
                     .sorted((p1, p2) -> Double.compare(
@@ -67,19 +67,19 @@ public class GaleShapleyService {
                     .collect(Collectors.toList());
 
             int currentIndex = nextProjectIndex.get(student);
-
+            
             // If student has exhausted all preferences, they remain unmatched
             if (currentIndex >= studentPreferences.size()) {
                 System.out.println("  Student " + student.getName() + " has exhausted all preferences");
                 continue;
             }
-
+            
             Project project = studentPreferences.get(currentIndex);
             double studentScore = aggregatedScores.get(student.getId()).get(project.getId());
-
-            System.out.println("  Student " + student.getName() + " proposes to project " +
-                    project.getProjectName() + " (score: " + studentScore + ")");
-
+            
+            System.out.println("  Student " + student.getName() + " proposes to project " + 
+                             project.getProjectName() + " (score: " + studentScore + ")");
+            
             nextProjectIndex.put(student, currentIndex + 1);
 
             if (!projectAssignments.containsKey(project)) {
@@ -90,10 +90,10 @@ public class GaleShapleyService {
                 // Project is already assigned, check if current student is better
                 Student currentAssignedStudent = projectAssignments.get(project);
                 double currentStudentScore = aggregatedScores.get(currentAssignedStudent.getId()).get(project.getId());
-
-                System.out.println("    Project assigned to " + currentAssignedStudent.getName() +
-                        " (score: " + currentStudentScore + ")");
-
+                
+                System.out.println("    Project assigned to " + currentAssignedStudent.getName() + 
+                                 " (score: " + currentStudentScore + ")");
+                
                 if (studentScore > currentStudentScore) {
                     // New student is better, reassign
                     System.out.println("    New student is better - reassigning");
@@ -106,7 +106,7 @@ public class GaleShapleyService {
                     freeStudents.offer(student);
                 }
             }
-
+            
             // Print current state
             System.out.println("  Current assignments:");
             for (Map.Entry<Student, Project> entry : matching.entrySet()) {
@@ -183,7 +183,6 @@ public class GaleShapleyService {
         return aggregatedScores;
     }
 }
-
 
 
 /*

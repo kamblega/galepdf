@@ -1,0 +1,15 @@
+/app/gale.shapley/src/main/java/gale/shapley/Application.java
+/app/gale.shapley/src/main/java/gale/shapley/controller/MatchingController.java
+/app/gale.shapley/src/main/java/gale/shapley/controller/ProjectController.java
+/app/gale.shapley/src/main/java/gale/shapley/controller/StudentController.java
+/app/gale.shapley/src/main/java/gale/shapley/model/Project.java
+/app/gale.shapley/src/main/java/gale/shapley/model/StaffPreference.java
+/app/gale.shapley/src/main/java/gale/shapley/model/Student.java
+/app/gale.shapley/src/main/java/gale/shapley/model/StudentPreference.java
+/app/gale.shapley/src/main/java/gale/shapley/model/Supervisor.java
+/app/gale.shapley/src/main/java/gale/shapley/repository/ProjectRepository.java
+/app/gale.shapley/src/main/java/gale/shapley/repository/StaffPreferenceRepository.java
+/app/gale.shapley/src/main/java/gale/shapley/repository/StudentPreferenceRepository.java
+/app/gale.shapley/src/main/java/gale/shapley/repository/StudentRepository.java
+/app/gale.shapley/src/main/java/gale/shapley/repository/SupervisorRepository.java
+/app/gale.shapley/src/main/java/gale/shapley/service/GaleShapleyService.java

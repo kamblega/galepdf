@@ -9,6 +9,7 @@ gale/shapley/repository/ProjectRepository.class
 gale/shapley/repository/StudentPreferenceRepository.class
 gale/shapley/service/FileStorageService.class
 gale/shapley/controller/StudentController.class
+gale/shapley/aspect/LoggingAspect.class
 gale/shapley/service/PdfGenerationService.class
 gale/shapley/service/GaleShapleyService.class
 gale/shapley/kafka/KafkaConsumerConfig.class

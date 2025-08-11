@@ -1,4 +1,5 @@
 /app/gale.shapley/src/main/java/gale/shapley/PreferenceService.java
+/app/gale.shapley/src/main/java/gale/shapley/aspect/LoggingAspect.java
 /app/gale.shapley/src/main/java/gale/shapley/controller/MatchingController.java
 /app/gale.shapley/src/main/java/gale/shapley/controller/ProjectController.java
 /app/gale.shapley/src/main/java/gale/shapley/controller/StudentController.java

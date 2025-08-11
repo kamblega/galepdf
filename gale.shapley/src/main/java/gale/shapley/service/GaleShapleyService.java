@@ -28,13 +28,13 @@ public class GaleShapleyService {
         List<Project> projects = projectRepository.findAll();
 
         // Debug: Print scores for verification
-        System.out.println("=== STUDENT-PROJECT SCORES ===");
+        System.out.println("--- STUDENT-PROJECT SCORES ---");
         for (Student student : students) {
             System.out.println("Student: " + student.getName());
-            for (Project project : projects) {
-                double score = aggregatedScores.get(student.getId()).get(project.getId());
-                System.out.println("  -> Project " + project.getProjectName() + ": " + score);
-            }
+            Map<Long, Double> projectScores = aggregatedScores.get(student.getId());
+            projects.stream()
+                .sorted((p1, p2) -> Double.compare(projectScores.get(p2.getId()), projectScores.get(p1.getId())))
+                .forEach(p -> System.out.println(String.format("  -> %-20s: %.2f", p.getProjectName(), projectScores.get(p.getId()))));
             System.out.println();
         }
 
@@ -53,11 +53,15 @@ public class GaleShapleyService {
         int iterations = 0;
         int maxIterations = students.size() * projects.size() * 2; // Safety limit
 
+        System.out.println("\n=================================");
+        System.out.println("  STARTING GALE-SHAPLEY MATCHING ");
+        System.out.println("=================================\n");
+
         while (!freeStudents.isEmpty() && iterations < maxIterations) {
             iterations++;
             Student student = freeStudents.poll();
             
-            System.out.println("Iteration " + iterations + ": Processing student " + student.getName());
+            System.out.println("--- Iteration " + iterations + ": Processing student " + student.getName() + " ---");
             
             // Get student's preference list (sorted by score - highest first)
             List<Project> studentPreferences = projects.stream()
@@ -70,66 +74,66 @@ public class GaleShapleyService {
             
             // If student has exhausted all preferences, they remain unmatched
             if (currentIndex >= studentPreferences.size()) {
-                System.out.println("  Student " + student.getName() + " has exhausted all preferences");
+                System.out.println("  " + student.getName() + " has exhausted all preferences and remains unmatched.");
                 continue;
             }
             
             Project project = studentPreferences.get(currentIndex);
             double studentScore = aggregatedScores.get(student.getId()).get(project.getId());
             
-            System.out.println("  Student " + student.getName() + " proposes to project " + 
-                             project.getProjectName() + " (score: " + studentScore + ")");
+            System.out.println(String.format("  %s proposes to %s (Score: %.2f)", student.getName(), project.getProjectName(), studentScore));
             
             nextProjectIndex.put(student, currentIndex + 1);
 
             if (!projectAssignments.containsKey(project)) {
                 // Project is free, assign student to it
-                System.out.println("    Project is free - assigning");
+                System.out.println(String.format("    ✅ %s is free. Assigning %s.", project.getProjectName(), student.getName()));
                 assignStudentToProject(student, project, matching, projectAssignments);
             } else {
                 // Project is already assigned, check if current student is better
                 Student currentAssignedStudent = projectAssignments.get(project);
                 double currentStudentScore = aggregatedScores.get(currentAssignedStudent.getId()).get(project.getId());
                 
-                System.out.println("    Project assigned to " + currentAssignedStudent.getName() + 
-                                 " (score: " + currentStudentScore + ")");
+                System.out.println(String.format("    %s is currently assigned to %s (Score: %.2f).", project.getProjectName(), currentAssignedStudent.getName(), currentStudentScore));
                 
                 if (studentScore > currentStudentScore) {
                     // New student is better, reassign
-                    System.out.println("    New student is better - reassigning");
+                    System.out.println(String.format("    %s is a better match! Reassigning. %s is now free.", student.getName(), currentAssignedStudent.getName()));
                     unassignStudentFromProject(currentAssignedStudent, project, matching, projectAssignments);
                     assignStudentToProject(student, project, matching, projectAssignments);
                     freeStudents.offer(currentAssignedStudent); // Previously assigned student becomes free
                 } else {
                     // Current student is not better, they remain free and will try next preference
-                    System.out.println("    Current student is better - new student remains free");
+                    System.out.println(String.format("    %s is not a better match. %s remains free.", student.getName(), student.getName()));
                     freeStudents.offer(student);
                 }
-            }
-            
-            // Print current state
-            System.out.println("  Current assignments:");
-            for (Map.Entry<Student, Project> entry : matching.entrySet()) {
-                System.out.println("    " + entry.getKey().getName() + " -> " + entry.getValue().getProjectName());
             }
             System.out.println();
         }
 
         if (iterations >= maxIterations) {
-            System.out.println("WARNING: Maximum iterations reached. Possible infinite loop.");
+            System.out.println("⚠️ WARNING: Maximum iterations reached. The matching process was terminated.");
         }
 
-        System.out.println("=== FINAL MATCHING ===");
+        System.out.println("\n=======================");
+        System.out.println("  FINAL MATCHING RESULT");
+        System.out.println("=======================\n");
         for (Map.Entry<Student, Project> entry : matching.entrySet()) {
-            System.out.println(entry.getKey().getName() + " -> " + entry.getValue().getProjectName());
+            System.out.println(String.format("%-20s -> %-20s", entry.getKey().getName(), entry.getValue().getProjectName()));
         }
 
-        // Check for unmatched students
+        System.out.println("\n--- Unmatched Students ---");
+        boolean anyUnmatched = false;
         for (Student student : students) {
             if (!matching.containsKey(student)) {
-                System.out.println("UNMATCHED: " + student.getName());
+                System.out.println(student.getName());
+                anyUnmatched = true;
             }
         }
+        if (!anyUnmatched) {
+            System.out.println("All students were matched successfully.");
+        }
+        System.out.println("\n=======================\n");
 
         return matching;
     }

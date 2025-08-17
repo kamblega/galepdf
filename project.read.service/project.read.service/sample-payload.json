@@ -1,0 +1,21 @@
+{
+  "projectId": 1,
+  "projectName": "My Awesome Project",
+  "projectDescription": "This is a great project.",
+  "projectDomain": "Software Engineering",
+  "readingSources": "Some book",
+  "projectLevel": "BSc PP",
+  "secondSupervisors": [
+    "supervisor1@example.com",
+    "supervisor2@example.com"
+  ],
+  "projectStatus": true,
+  "studentPreferences": [
+    "student1@example.com",
+    "student2@example.com"
+  ],
+  "staffName": "Dr. Smith",
+  "staffEmail": "dr.smith@example.com",
+  "school": "School of Computing",
+  "department": "Computer Science"
+}

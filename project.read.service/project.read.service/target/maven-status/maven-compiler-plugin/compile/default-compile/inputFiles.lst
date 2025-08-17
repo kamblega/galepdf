@@ -1,0 +1,6 @@
+/app/src/main/java/project/read/service/ProjectReadServiceApplication.java
+/app/src/main/java/project/read/service/controller/ProjectReadController.java
+/app/src/main/java/project/read/service/entity/Project.java
+/app/src/main/java/project/read/service/repo/ProjectRepository.java
+/app/src/main/java/project/read/service/service/ProjectReadService.java
+/app/src/main/java/project/read/service/service/ProjectService.java

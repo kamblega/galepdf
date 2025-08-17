@@ -1,0 +1,53 @@
+{
+  "create-project": {
+    "projectName": "New Project",
+    "projectDescription": "This is a new project.",
+    "projectDomain": "Web Development",
+    "readingSources": "https://www.google.com",
+    "projectLevel": "Beginner",
+    "secondSupervisors": [
+      "supervisor1@example.com",
+      "supervisor2@example.com"
+    ],
+    "projectStatus": false,
+    "studentPreferences": [
+      "student1@example.com",
+      "student2@example.com"
+    ],
+    "staffName": "John Doe",
+    "staffEmail": "john.doe@example.com",
+    "school": "School of Computer Science",
+    "department": "Computer Science",
+    "preference": [
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "NONE",
+      "ANOTHER"
+    ]
+  },
+  "update-project": {
+    "projectName": "Updated Project",
+    "projectDescription": "This is an updated project.",
+    "projectDomain": "Machine Learning",
+    "readingSources": "https://www.google.com",
+    "projectLevel": "Intermediate",
+    "secondSupervisors": [
+      "supervisor3@example.com",
+      "supervisor4@example.com"
+    ],
+    "projectStatus": true,
+    "studentPreferences": [
+      "student3@example.com",
+      "student4@example.com"
+    ],
+    "staffName": "Jane Doe",
+    "staffEmail": "jane.doe@example.com",
+    "school": "School of Electrical Engineering",
+    "department": "Electrical Engineering",
+    "preference": [
+      "HIGH",
+      "MEDIUM"
+    ]
+  }
+}

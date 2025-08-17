@@ -1,0 +1,8 @@
+/app/src/main/java/com/example/project/management/service/entity/Project.java
+/app/src/main/java/com/example/project/management/service/service/ProjectQueryService.java
+/app/src/main/java/com/example/project/management/service/controller/ProjectQueryController.java
+/app/src/main/java/com/example/project/management/service/ProjectManagementServiceApplication.java
+/app/src/main/java/com/example/project/management/service/controller/ProjectWriteController.java
+/app/src/main/java/com/example/project/management/service/service/ProjectWriteService.java
+/app/src/main/java/com/example/project/management/service/dto/ProjectDto.java
+/app/src/main/java/com/example/project/management/service/repo/ProjectRepository.java

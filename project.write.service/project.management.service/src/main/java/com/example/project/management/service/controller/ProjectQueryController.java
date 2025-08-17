@@ -1,6 +1,7 @@
 package com.example.project.management.service.controller;
 
 import com.example.project.management.service.entity.Project;
+import com.example.project.management.service.entity.Student;
 import com.example.project.management.service.service.ProjectQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,11 @@ import java.util.List;
 public class ProjectQueryController {
     @Autowired
     private ProjectQueryService projectQueryService;
+
+    @GetMapping("/students/all")
+    public ResponseEntity<List<Student>> getAllStudents() {
+        return ResponseEntity.ok(projectQueryService.getAllStudents());
+    }
 
     @GetMapping("/all")
     public ResponseEntity<List<Project>> getAllProjects() {

@@ -1,7 +1,9 @@
 package com.example.project.management.service.service;
 
 import com.example.project.management.service.entity.Project;
+import com.example.project.management.service.entity.Student;
 import com.example.project.management.service.repo.ProjectRepository;
+import com.example.project.management.service.repo.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,13 @@ import java.util.List;
 public class ProjectQueryService {
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
 
     public List<Project> getAllProjects() {
         return projectRepository.findAll();

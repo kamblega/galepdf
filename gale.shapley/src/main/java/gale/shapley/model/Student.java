@@ -1,21 +1,12 @@
 package gale.shapley.model;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import java.util.Map;
 
-@Entity
 public class Student {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private String email;
-    @ElementCollection
     private Map<String, String> skills;
 
     // Getters and setters

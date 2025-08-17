@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Data Upload</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        .form-group { margin-bottom: 1em; }
+        label { display: block; }
+        input, select, textarea { width: 400px; padding: 0.5em; }
+        .skills-container button { margin-top: 0.5em; }
+        .skill-entry { display: flex; align-items: center; margin-bottom: 0.5em; }
+        .skill-entry input { width: 180px; margin-right: 0.5em; }
+        .skill-entry select { width: 120px; margin-right: 0.5em; }
+        button { padding: 0.5em 1em; }
+        #response { margin-top: 1em; padding: 1em; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+<h1>Project Details Submission</h1>
+<p>Enter the details for a new project below.</p>
+
+<form id="project-form">
+    <div class="form-group">
+        <label for="projectName">Project Name:</label>
+        <input type="text" id="projectName" required>
+    </div>
+    <div class="form-group">
+        <label for="projectDescription">Project Description:</label>
+        <textarea id="projectDescription" rows="4" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="projectDomain">Project Domain:</label>
+        <input type="text" id="projectDomain" required>
+    </div>
+    <div class="form-group">
+        <label for="readingSources">Reading Sources:</label>
+        <input type="text" id="readingSources">
+    </div>
+    <div class="form-group">
+        <label for="projectLevel">Project Level:</label>
+        <select id="projectLevel">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="secondSupervisors">Second Supervisors (comma-separated emails):</label>
+        <input type="text" id="secondSupervisors">
+    </div>
+    <div class="form-group">
+        <label for="staffName">Staff Name:</label>
+        <input type="text" id="staffName" required>
+    </div>
+    <div class="form-group">
+        <label for="staffEmail">Staff Email:</label>
+        <input type="email" id="staffEmail" required>
+    </div>
+    <div class="form-group">
+        <label for="school">School:</label>
+        <input type="text" id="school" required>
+    </div>
+    <div class="form-group">
+        <label for="department">Department:</label>
+        <input type="text" id="department" required>
+    </div>
+
+    <div class="form-group skills-container">
+        <label>Required Skills:</label>
+        <div id="skills-list">
+            <!-- Skill entries will be added here -->
+        </div>
+        <button type="button" id="add-skill">Add Required Skill</button>
+    </div>
+
+    <button type="submit">Submit Project</button>
+</form>
+
+<div id="response" style="display:none;"></div>
+
+<script>
+    document.getElementById('add-skill').addEventListener('click', function() {
+        const skillsList = document.getElementById('skills-list');
+        const skillEntry = document.createElement('div');
+        skillEntry.className = 'skill-entry';
+
+        const skillNameInput = document.createElement('input');
+        skillNameInput.type = 'text';
+        skillNameInput.placeholder = 'Skill Name (e.g., AWS)';
+        skillNameInput.className = 'skill-name';
+        skillNameInput.required = true;
+
+        const skillLevelSelect = document.createElement('select');
+        skillLevelSelect.className = 'skill-level';
+        const levels = ['high', 'medium', 'low'];
+        levels.forEach(level => {
+            const option = document.createElement('option');
+            option.value = level;
+            option.textContent = level.charAt(0).toUpperCase() + level.slice(1);
+            skillLevelSelect.appendChild(option);
+        });
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.textContent = 'Remove';
+        removeButton.onclick = function() {
+            skillsList.removeChild(skillEntry);
+        };
+
+        skillEntry.appendChild(skillNameInput);
+        skillEntry.appendChild(skillLevelSelect);
+        skillEntry.appendChild(removeButton);
+        skillsList.appendChild(skillEntry);
+    });
+
+    document.getElementById('project-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const requiredSkills = {};
+        const skillEntries = document.querySelectorAll('.skill-entry');
+        skillEntries.forEach(entry => {
+            const skillName = entry.querySelector('.skill-name').value;
+            const skillLevel = entry.querySelector('.skill-level').value;
+            if (skillName) {
+                requiredSkills[skillName] = skillLevel;
+            }
+        });
+
+        const supervisors = document.getElementById('secondSupervisors').value
+            .split(',')
+            .map(s => s.trim())
+            .filter(s => s);
+
+        const projectData = {
+            projectName: document.getElementById('projectName').value,
+            projectDescription: document.getElementById('projectDescription').value,
+            projectDomain: document.getElementById('projectDomain').value,
+            readingSources: document.getElementById('readingSources').value,
+            projectLevel: document.getElementById('projectLevel').value,
+            secondSupervisors: supervisors,
+            projectStatus: true, // Defaulting to true, can be changed if needed
+            staffName: document.getElementById('staffName').value,
+            staffEmail: document.getElementById('staffEmail').value,
+            school: document.getElementById('school').value,
+            department: document.getElementById('department').value,
+            requiredSkills: requiredSkills
+        };
+
+        const responseDiv = document.getElementById('response');
+        responseDiv.style.display = 'block';
+        responseDiv.textContent = 'Submitting...';
+
+        fetch('http://localhost:8081/write/create-project', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(projectData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            responseDiv.textContent = 'Successfully submitted! Project ID: ' + data.projectId;
+            responseDiv.style.borderColor = 'green';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            responseDiv.textContent = 'Error submitting data: ' + error.message;
+            responseDiv.style.borderColor = 'red';
+        });
+    });
+
+    // Add one skill entry by default
+    document.getElementById('add-skill').click();
+</script>
+
+</body>
+</html>

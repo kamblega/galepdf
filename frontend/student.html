@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Data Upload</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        .form-group { margin-bottom: 1em; }
+        label { display: block; }
+        input, select { width: 300px; padding: 0.5em; }
+        .skills-container button { margin-top: 0.5em; }
+        .skill-entry { display: flex; align-items: center; margin-bottom: 0.5em; }
+        .skill-entry input { width: 150px; margin-right: 0.5em; }
+        .skill-entry select { width: 100px; margin-right: 0.5em; }
+        button { padding: 0.5em 1em; }
+        #response { margin-top: 1em; padding: 1em; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+<h1>Student Details Submission</h1>
+<p>Enter your details and skill preferences below.</p>
+
+<form id="student-form">
+    <div class="form-group">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+
+    <div class="form-group skills-container">
+        <label>Skills (Preference):</label>
+        <div id="skills-list">
+            <!-- Skill entries will be added here -->
+        </div>
+        <button type="button" id="add-skill">Add Skill</button>
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
+
+<div id="response" style="display:none;"></div>
+
+<script>
+    document.getElementById('add-skill').addEventListener('click', function() {
+        const skillsList = document.getElementById('skills-list');
+        const skillEntry = document.createElement('div');
+        skillEntry.className = 'skill-entry';
+
+        const skillNameInput = document.createElement('input');
+        skillNameInput.type = 'text';
+        skillNameInput.placeholder = 'Skill Name (e.g., Java)';
+        skillNameInput.className = 'skill-name';
+        skillNameInput.required = true;
+
+        const skillLevelSelect = document.createElement('select');
+        skillLevelSelect.className = 'skill-level';
+        const levels = ['high', 'medium', 'low'];
+        levels.forEach(level => {
+            const option = document.createElement('option');
+            option.value = level;
+            option.textContent = level.charAt(0).toUpperCase() + level.slice(1);
+            skillLevelSelect.appendChild(option);
+        });
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.textContent = 'Remove';
+        removeButton.onclick = function() {
+            skillsList.removeChild(skillEntry);
+        };
+
+        skillEntry.appendChild(skillNameInput);
+        skillEntry.appendChild(skillLevelSelect);
+        skillEntry.appendChild(removeButton);
+        skillsList.appendChild(skillEntry);
+    });
+
+    document.getElementById('student-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const skills = {};
+        const skillEntries = document.querySelectorAll('.skill-entry');
+        skillEntries.forEach(entry => {
+            const skillName = entry.querySelector('.skill-name').value;
+            const skillLevel = entry.querySelector('.skill-level').value;
+            if (skillName) {
+                skills[skillName] = skillLevel;
+            }
+        });
+
+        const studentData = {
+            name: name,
+            email: email,
+            skills: skills
+        };
+
+        const responseDiv = document.getElementById('response');
+        responseDiv.style.display = 'block';
+        responseDiv.textContent = 'Submitting...';
+
+        fetch('http://localhost:8081/write/create-student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(studentData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            responseDiv.textContent = 'Successfully submitted! Student ID: ' + data.id;
+            responseDiv.style.borderColor = 'green';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            responseDiv.textContent = 'Error submitting data: ' + error.message;
+            responseDiv.style.borderColor = 'red';
+        });
+    });
+
+    // Add one skill entry by default
+    document.getElementById('add-skill').click();
+</script>
+
+</body>
+</html>

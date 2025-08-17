@@ -56,6 +56,12 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"))
     private List<String> preference;
 
+    @ElementCollection
+    @CollectionTable(name = "project_required_skills", joinColumns = @JoinColumn(name = "project_id"))
+    @MapKeyColumn(name = "skill_name")
+    @Column(name = "skill_level")
+    private Map<String, String> requiredSkills;
+
     // Getters and Setters
     public Long getProjectId() { return projectId; }
     public void setProjectId(Long projectId) { this.projectId = projectId; }
@@ -85,4 +91,6 @@ public class Project {
     public void setDepartment(String department) { this.department = department; }
     public List<String> getPreference() { return preference; }
     public void setPreference(List<String> preference) { this.preference = preference; }
+    public Map<String, String> getRequiredSkills() { return requiredSkills; }
+    public void setRequiredSkills(Map<String, String> requiredSkills) { this.requiredSkills = requiredSkills; }
 }

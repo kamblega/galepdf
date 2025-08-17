@@ -1,8 +1,8 @@
-/app/gale.shapley/src/main/java/gale/shapley/PreferenceService.java
 /app/gale.shapley/src/main/java/gale/shapley/aspect/LoggingAspect.java
+/app/gale.shapley/src/main/java/gale/shapley/config/AppConfig.java
+/app/gale.shapley/src/main/java/gale/shapley/config/WebConfig.java
 /app/gale.shapley/src/main/java/gale/shapley/controller/MatchingController.java
-/app/gale.shapley/src/main/java/gale/shapley/controller/ProjectController.java
-/app/gale.shapley/src/main/java/gale/shapley/controller/StudentController.java
+/app/gale.shapley/src/main/java/gale/shapley/dto/MatchResultDto.java
 /app/gale.shapley/src/main/java/gale/shapley/kafka/KafkaConsumerConfig.java
 /app/gale.shapley/src/main/java/gale/shapley/kafka/KafkaProducerConfig.java
 /app/gale.shapley/src/main/java/gale/shapley/kafka/KafkaProducerService.java
@@ -13,12 +13,7 @@
 /app/gale.shapley/src/main/java/gale/shapley/model/Student.java
 /app/gale.shapley/src/main/java/gale/shapley/model/StudentPreference.java
 /app/gale.shapley/src/main/java/gale/shapley/model/Supervisor.java
-/app/gale.shapley/src/main/java/gale/shapley/repository/ProjectRepository.java
-/app/gale.shapley/src/main/java/gale/shapley/repository/StaffPreferenceRepository.java
-/app/gale.shapley/src/main/java/gale/shapley/repository/StudentPreferenceRepository.java
-/app/gale.shapley/src/main/java/gale/shapley/repository/StudentRepository.java
-/app/gale.shapley/src/main/java/gale/shapley/repository/SupervisorRepository.java
-/app/gale.shapley/src/main/java/gale/shapley/service/CsvProcessingService.java
+/app/gale.shapley/src/main/java/gale/shapley/service/CsvExportService.java
 /app/gale.shapley/src/main/java/gale/shapley/service/EmailService.java
 /app/gale.shapley/src/main/java/gale/shapley/service/FileStorageService.java
 /app/gale.shapley/src/main/java/gale/shapley/service/GaleShapleyService.java

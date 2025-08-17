@@ -1,7 +1,6 @@
 package gale.shapley.controller;
 
-import gale.shapley.kafka.KafkaProducerService;
-import gale.shapley.kafka.payload.MatchingJobPayload;
+import gale.shapley.dto.MatchResultDto;
 import gale.shapley.model.Project;
 import gale.shapley.model.Student;
 import gale.shapley.service.*;
@@ -11,12 +10,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Map;
-
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 import java.util.List;
 
 @RestController
@@ -24,63 +20,38 @@ import java.util.List;
 public class MatchingController {
 
     private final GaleShapleyService galeShapleyService;
-    private final CsvProcessingService csvProcessingService;
     private final PdfGenerationService pdfGenerationService;
     private final EmailService emailService;
-    private final FileStorageService fileStorageService;
-    private final KafkaProducerService kafkaProducerService;
+    private final CsvExportService csvExportService;
 
     @Autowired
     public MatchingController(GaleShapleyService galeShapleyService,
-                              CsvProcessingService csvProcessingService,
                               PdfGenerationService pdfGenerationService,
                               EmailService emailService,
-                              FileStorageService fileStorageService,
-                              KafkaProducerService kafkaProducerService) {
+                              CsvExportService csvExportService) {
         this.galeShapleyService = galeShapleyService;
-        this.csvProcessingService = csvProcessingService;
         this.pdfGenerationService = pdfGenerationService;
         this.emailService = emailService;
-        this.fileStorageService = fileStorageService;
-        this.kafkaProducerService = kafkaProducerService;
-    }
-
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadCsv(@RequestParam("students") MultipartFile studentsFile,
-                                            @RequestParam("projects") MultipartFile projectsFile) {
-        try {
-            // Store files temporarily
-            String studentsFilePath = fileStorageService.storeFile(studentsFile);
-            String projectsFilePath = fileStorageService.storeFile(projectsFile);
-
-            // Create and send Kafka job
-            MatchingJobPayload payload = new MatchingJobPayload(studentsFilePath, projectsFilePath);
-            kafkaProducerService.sendMatchingJob(payload);
-
-            return ResponseEntity.accepted().body("Your matching request has been accepted and is being processed asynchronously.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error submitting matching request: " + e.getMessage());
-        }
+        this.csvExportService = csvExportService;
     }
 
     @PostMapping
-    public List<String> match() {
+    public ResponseEntity<List<MatchResultDto>> match() {
         Map<Student, Project> matches = galeShapleyService.match();
-        List<String> result = new ArrayList<>();
-        for (Map.Entry<Student, Project> entry : matches.entrySet()) {
-            Student student = entry.getKey();
-            Project project = entry.getValue();
-            result.add(String.format("Student {%s} - Best match - Project {%d} - Project {%s}",
-                    student.getName(), project.getId(), project.getProjectName()));
-        }
-        return result;
+        List<MatchResultDto> resultDtos = matches.entrySet().stream()
+                .map(entry -> new MatchResultDto(
+                        entry.getKey().getName(),
+                        entry.getKey().getEmail(),
+                        entry.getValue().getProjectName(),
+                        entry.getValue().getStaffName()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resultDtos);
     }
 
     @GetMapping("/csv")
     public ResponseEntity<String> getMatchesAsCsv() {
         Map<Student, Project> matches = galeShapleyService.match();
-
-        String csvData = generateCsvData(matches);
+        String csvData = csvExportService.generateCsvData(matches);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=matches.csv");
@@ -105,7 +76,7 @@ public class MatchingController {
     public ResponseEntity<String> sendEmail() {
         try {
             Map<Student, Project> matches = galeShapleyService.match();
-            String csvData = generateCsvData(matches);
+            String csvData = csvExportService.generateCsvData(matches);
             byte[] pdfData = pdfGenerationService.generatePdf(matches);
 
             emailService.sendMatchResultsEmail(csvData, pdfData);
@@ -114,18 +85,5 @@ public class MatchingController {
         } catch (MessagingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send email: " + e.getMessage());
         }
-    }
-
-    private String generateCsvData(Map<Student, Project> matches) {
-        StringBuilder csvOutput = new StringBuilder();
-        csvOutput.append("Student Name,Project Name\n"); // CSV Header
-
-        for (Map.Entry<Student, Project> entry : matches.entrySet()) {
-            csvOutput.append(entry.getKey().getName())
-                    .append(",")
-                    .append(entry.getValue().getProjectName())
-                    .append("\n");
-        }
-        return csvOutput.toString();
     }
 }

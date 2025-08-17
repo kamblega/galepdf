@@ -1,45 +1,27 @@
 package gale.shapley.model;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
-
 import java.util.Map;
 
-@Entity
 public class Project {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonProperty("projectId")
     private Long id;
     private String projectName;
     private String projectDescription;
     private String projectDomain;
     private String readingSources;
     private String projectLevel;
-    @ElementCollection
     private List<String> secondSupervisors;
     private boolean projectStatus;
     private String staffName;
     private String staffEmail;
     private String school;
     private String department;
-    @ElementCollection
     private Map<String, String> requiredSkills;
 
-    @ManyToOne
-    private Supervisor supervisor;
-
-    @ManyToMany
-    private List<Student> assignedStudents;
-
     // Getters and setters
-
     public Long getId() {
         return id;
     }
@@ -142,9 +124,5 @@ public class Project {
 
     public void setRequiredSkills(Map<String, String> requiredSkills) {
         this.requiredSkills = requiredSkills;
-    }
-
-    public void setSupervisor(Supervisor supervisor) {
-        this.supervisor = supervisor;
     }
 }
